@@ -29,7 +29,7 @@ class UserController {
   }
 
   
-  async login(req, res) {
+  async login(req, res, next) {
     const {email, password, role} = req.body
     const user = await User.findOne({where: {email}})
     if (!user) {
@@ -37,7 +37,7 @@ class UserController {
     }
     let comparePassword = bcrypt.compareSync(password, user.password)
     if (!comparePassword) {
-      return next(ApiError.internal('Не верный пароль'))
+      return next(ApiError.internal('Неверный пароль'))
     }
     const token = createJWT(user.id, user.email, user.role)
     return res.json({token})
